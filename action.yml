@@ -1,0 +1,58 @@
+name: 'Slack Notify PR'
+description: 'Post PR notifications to Slack.'
+inputs:
+  webhook-url:
+    description: 'Webhook URL for Your Workspace'
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - run: |
+        curl --request POST ${{ inputs.webhook-url }} \
+          --header 'Content-Type: application/json' \
+          --data-raw '{
+            "text": "Pull Request ${{ github.event.action }}",
+            "blocks": [
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "Pull request ${{ github.event.action }} <${{ github.event.pull_request._links.html.href }}|#${{ github.event.number }}>."
+                },
+                "accessory": {
+                  "type": "button",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "View files",
+                    "emoji": false
+                  },
+                  "value": "view_files",
+                  "url": "${{ github.event.pull_request._links.html.href }}/files",
+                  "action_id": "button-action"
+                }
+              },
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "*${{ github.actor }}* wants to merge ${{ github.event.pull_request.commits }} commits into `${{ github.base_ref }}` from `${{ github.head_ref }}`"
+                }
+              },
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "*Files changed*\n${{ github.event.pull_request.commits }}"
+                }
+              },
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "*${{ github.event.pull_request.title }}*\n${{ github.event.pull_request.body }}"
+                }
+              }
+            ]
+          }'
+      if: github.event_name == 'pull_request' && (github.event.action == 'opened' || github.event.action == 'reopened')
+      shell: bash
