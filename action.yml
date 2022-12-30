@@ -49,7 +49,14 @@ runs:
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": "*${{ github.event.pull_request.title }}*\n${{ github.event.pull_request.body }}"
+                  "text": "*${{ github.event.pull_request.title }}*"
+                }
+              },
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": ${{ toJson(github.event.pull_request.body) }}
                 }
               }
             ]
