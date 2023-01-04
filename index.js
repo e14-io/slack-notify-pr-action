@@ -57,8 +57,9 @@ const payload = {
   ],
 };
 
+core.debug(payload);
+
 axios.post(webhookUrl, payload)
   .catch(error => {
     core.error(error.message);
-    core.info(JSON.stringify(payload, null, 2));
   });
