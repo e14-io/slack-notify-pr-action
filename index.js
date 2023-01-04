@@ -51,20 +51,14 @@ const payload = {
       type: 'section',
       text: {
         type: 'mrkdwn',
-        text: `*${event.pull_request.title}*`,
+        text: `*${event.pull_request.title}*\n${event.pull_request.body || ''}`,
       }
     },
-    {
-      type: 'section',
-      text: {
-        type: 'mrkdwn',
-        text: event.pull_request.body,
-      }
-    }
   ],
 };
 
 axios.post(webhookUrl, payload)
   .catch(error => {
     core.error(error.message);
+    core.info(JSON.stringify(payload, null, 2));
   });
