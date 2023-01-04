@@ -5,7 +5,7 @@ This action posts a notification on Slack each time a pull request is opened or 
 ## Usage
 
 ```yml
-- uses: e14-io/slack-notify-pr-action@v0.1.0
+- uses: e14-io/slack-notify-pr-action@v0.1.2
   with:
     webhook-url: ${{ secrets.SLACK_WEBHOOK }}
 ```
