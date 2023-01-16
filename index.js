@@ -6,6 +6,8 @@ const webhookUrl = core.getInput('webhook-url');
 
 const event = github.context.payload;
 
+core.debug(github.context);
+
 const payload = {
   text: `Pull Request ${event.action}`,
   blocks: [
