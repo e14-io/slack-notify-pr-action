@@ -2,20 +2,34 @@ const core = require('@actions/core');
 const github = require('@actions/github');
 const axios = require('axios');
 
-const webhookUrl = core.getInput('webhook-url');
-
 const event = github.context.payload;
 
-core.debug(github.context);
+if (!['pull_request', 'pull_request_target'].includes(github.context.eventName)) {
+  core.info("Event type not handled. Skipping.");
+  process.exit(0);
+}
+
+if (event.pull_request.draft) {
+  core.info("This is a draft pull request. Skipping.");
+  process.exit(0);
+}
+
+const actions = {
+  opened: 'opened',
+  ready_for_review: 'ready for review',
+  reopened: 'reopened',
+};
+const action = actions[event.action];
+const webhookUrl = core.getInput('webhook-url');
 
 const payload = {
-  text: `Pull Request ${event.action}`,
+  text: `Pull Request ${action}`,
   blocks: [
     {
       type: 'section',
       text: {
         type: 'mrkdwn',
-        text: `Pull request ${event.action} <${event.pull_request._links.html.href}|#${event.number}>.`,
+        text: `Pull request ${action} <${event.pull_request._links.html.href}|#${event.number}>.`,
       },
       accessory: {
         type: 'button',
