@@ -29,19 +29,8 @@ const payload = {
       type: 'section',
       text: {
         type: 'mrkdwn',
-        text: `Pull request ${action} <${event.pull_request._links.html.href}|#${event.number}>.`,
+        text: `*<${event.pull_request._links.html.href}|Pull request ${action} #${event.number}>*`,
       },
-      accessory: {
-        type: 'button',
-        text: {
-          type: 'plain_text',
-          text: 'View files',
-          emoji: false,
-        },
-        value: 'view_files',
-        url: `${event.pull_request._links.html.href}/files`,
-        action_id: 'button-action',
-      }
     },
     {
       type: 'section',
@@ -52,24 +41,55 @@ const payload = {
     },
     {
       type: 'section',
+      text: {
+        type: 'mrkdwn',
+        text: `*${event.pull_request.title}*`,
+      }
+    },
+    (
+      event.pull_request.body
+        ? {
+            type: 'section',
+            text: {
+              type: 'mrkdwn',
+              text: event.pull_request.body,
+            }
+          }
+        : {
+            type: 'context',
+            elements: [
+              {
+                type: 'plain_text',
+                text: 'No description provided.',
+              }
+            ]
+          }
+    ),
+    {
+			type: 'divider',
+		},
+    {
+      type: 'section',
       fields: [
         {
           type: 'mrkdwn',
-          text: `*Commits*\n${event.pull_request.commits}`,
+          text: `<${event.pull_request._links.html.href}/commits|Commits>`,
         },
         {
           type: 'mrkdwn',
-          text: `*Files changed*\n${event.pull_request.changed_files}`,
+          text: `<${event.pull_request._links.html.href}/files|Files changed>`,
+        },
+        {
+          type: 'mrkdwn',
+          text: `${event.pull_request.commits}`,
+        },
+        {
+          type: 'mrkdwn',
+          text: `${event.pull_request.changed_files}`,
         },
       ],
     },
-    {
-      type: 'section',
-      text: {
-        type: 'mrkdwn',
-        text: `*${event.pull_request.title}*\n${event.pull_request.body || ''}`,
-      }
-    },
+
   ],
 };
 
